@@ -1,10 +1,10 @@
-package com.zdl.spring.bus;
+package com.zdl.spring.bus.message;
 
 import java.util.List;
 
 /**
  * 消息总线中的消息数据结构
- *
+ * <p>
  * Created by ZDLegend on 2019/4/10 11:28
  */
 public class BusMessage<T> {

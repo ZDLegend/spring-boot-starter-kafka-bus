@@ -1,22 +1,23 @@
-package com.zdl.spring.bus;
+package com.zdl.spring.bus.endpoint;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zdl.spring.bus.message.BusMessage;
 import com.zdl.spring.bus.utils.ClassUtil;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.zdl.spring.bus.EndPointManage.*;
+import static com.zdl.spring.bus.endpoint.EndpointManage.*;
 
 /**
  * 消息总线端点基类
- *
+ * <p>
  * Created by ZDLegend on 2019/4/10 11:11
  */
-public interface BaseBusEndPoint<T> {
+public interface BaseBusEndpoint<T> {
 
     /**
      * 初始化（系统启动时调用）
@@ -31,14 +32,14 @@ public interface BaseBusEndPoint<T> {
     /**
      * 消息内容修改操作, 默认调用资源添加操作方法
      */
-    default void modify(List<T> list){
+    default void modify(List<T> list) {
         insert(list);
     }
 
     /**
      * 消息内容加载操作, 默认调用资源添加操作方法
      */
-    default void load(List<T> list){
+    default void load(List<T> list) {
         insert(list);
     }
 
@@ -70,7 +71,7 @@ public interface BaseBusEndPoint<T> {
         }
 
         List<T> list;
-        if(!CollectionUtils.isEmpty(message.getData()) && message.getData().get(0) instanceof JSONObject) {
+        if (!CollectionUtils.isEmpty(message.getData()) && message.getData().get(0) instanceof JSONObject) {
             list = JSON.parseArray((new JSONArray((List<Object>) message.getData())).toJSONString(),
                     (Class<T>) ClassUtil.getGenericType(this.getClass()));
         } else {

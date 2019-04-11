@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by ZDLegend on 2019/4/11 11:55
@@ -16,14 +18,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @BusEndpoint("jpa-user")
 public class JpaUserEndpoint implements BaseBusEndpoint<User> {
 
-    private Map<String, User> userMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, User> userMap = new ConcurrentHashMap<>();
 
     @Autowired
     private UserDao userDao;
 
     @Override
     public void init() {
-        userDao.findAll().forEach(user -> userMap.put(user.getId(), user));
+        userMap = userDao.findAll().stream().collect(Collectors.toConcurrentMap(User::getId, user -> user));
     }
 
     @Override
@@ -36,7 +38,7 @@ public class JpaUserEndpoint implements BaseBusEndpoint<User> {
         list.forEach(user -> userMap.remove(user.getId()));
     }
 
-    public Map<String, User> getUserMap() {
+    Map<String, User> getUserMap() {
         return userMap;
     }
 }

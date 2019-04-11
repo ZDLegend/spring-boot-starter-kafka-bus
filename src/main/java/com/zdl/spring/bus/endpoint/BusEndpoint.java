@@ -24,4 +24,9 @@ public @interface BusEndpoint {
      * 初始化顺序支持，按由小到大顺序，默认值99999
      */
     int order() default 99999;
+
+    /**
+     * 指定接收来源（为空则接受所有）
+     */
+    String[] accept() default {};
 }

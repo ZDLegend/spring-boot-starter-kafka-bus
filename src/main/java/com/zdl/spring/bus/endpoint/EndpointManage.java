@@ -3,12 +3,10 @@ package com.zdl.spring.bus.endpoint;
 import com.alibaba.fastjson.JSON;
 import com.zdl.spring.bus.BusProperties;
 import com.zdl.spring.bus.message.BusMessage;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * EndPoint管理及初始化
@@ -36,7 +34,7 @@ public class EndpointManage {
     /**
      * 初始化所有EndPoint
      */
-    public void initEndPointMap() {
+    void initEndPointMap() {
         endpoints.stream()
                 .filter(endPoint -> endPoint.getClass().getAnnotation(BusEndpoint.class) != null)
                 .sorted(Comparator.comparingInt(endPoint -> endPoint.getClass().getAnnotation(BusEndpoint.class).order()))
@@ -54,6 +52,7 @@ public class EndpointManage {
         BusMessage busMessage = JSON.parseObject(msg, BusMessage.class);
         if (msg != null) {
 
+            //是否为目标端点
             if (!StringUtils.isEmpty(busMessage.getTarget())
                     && !properties.getNodeName().equals(busMessage.getTarget())) {
                 return;
@@ -61,6 +60,13 @@ public class EndpointManage {
 
             BaseBusEndpoint endPoint = endpointMap.get(busMessage.getEndPointId());
             if (endPoint != null) {
+
+                //是否接收指定端点，为空则接收所有端点
+                List<String> accepts = Arrays.asList(endPoint.getClass().getAnnotation(BusEndpoint.class).accept());
+                if (!CollectionUtils.isEmpty(accepts)
+                        && !accepts.contains(busMessage.getSource())) {
+                    return;
+                }
                 endPoint.messageToEndPoint(busMessage);
             }
         }

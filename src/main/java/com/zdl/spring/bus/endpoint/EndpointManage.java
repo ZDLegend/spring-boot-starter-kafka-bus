@@ -50,25 +50,29 @@ public class EndpointManage {
      */
     public static void messageToEndPoint(String msg) {
         BusMessage busMessage = JSON.parseObject(msg, BusMessage.class);
-        if (msg != null) {
-
-            //是否为目标端点
-            if (!StringUtils.isEmpty(busMessage.getTarget())
-                    && !properties.getNodeName().equals(busMessage.getTarget())) {
-                return;
-            }
-
+        if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTarget())) {
             BaseBusEndpoint endPoint = endpointMap.get(busMessage.getEndPointId());
             if (endPoint != null) {
-
-                //是否接收指定端点，为空则接收所有端点
+                //是否接收指定服务，为空则接收所有服务
                 List<String> accepts = Arrays.asList(endPoint.getClass().getAnnotation(BusEndpoint.class).accept());
-                if (!CollectionUtils.isEmpty(accepts)
-                        && !accepts.contains(busMessage.getSource())) {
-                    return;
+                if (isAccept(accepts, busMessage.getSource())) {
+                    endPoint.messageToEndPoint(busMessage);
                 }
-                endPoint.messageToEndPoint(busMessage);
             }
         }
+    }
+
+    /**
+     * 是否为bus message的目的Endpoint
+     */
+    private static boolean isTargetEndpoint(String nodeName, String targetName) {
+        return StringUtils.isEmpty(targetName) || nodeName.equals(targetName);
+    }
+
+    /**
+     * 该Endpoint是否可接收bus message
+     */
+    private static boolean isAccept(List<String> accepts, String source) {
+        return CollectionUtils.isEmpty(accepts) || accepts.contains(source);
     }
 }

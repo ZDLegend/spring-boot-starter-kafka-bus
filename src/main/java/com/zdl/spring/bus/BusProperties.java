@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "zld.spring.bus")
 public class BusProperties {
 
-    private String nodeName;
+    private String nodeName = "bus";
 
     private String topic;
 

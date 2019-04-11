@@ -54,8 +54,8 @@ public class EndpointManage {
         BusMessage busMessage = JSON.parseObject(msg, BusMessage.class);
         if (msg != null) {
 
-            if(!StringUtils.isEmpty(busMessage.getTarget())
-                    && !properties.getNodeName().equals(busMessage.getTarget())){
+            if (!StringUtils.isEmpty(busMessage.getTarget())
+                    && !properties.getNodeName().equals(busMessage.getTarget())) {
                 return;
             }
 

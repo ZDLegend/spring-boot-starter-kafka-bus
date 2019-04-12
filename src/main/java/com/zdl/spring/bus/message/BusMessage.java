@@ -1,5 +1,8 @@
 package com.zdl.spring.bus.message;
 
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +30,7 @@ public class BusMessage<T> {
     /**
      * 消息目标
      */
-    private String target;
+    private List<String> targets = new ArrayList<>();
 
     /**
      * 消息内容
@@ -58,12 +61,16 @@ public class BusMessage<T> {
         this.source = source;
     }
 
-    public String getTarget() {
-        return target;
+    public List<String> getTargets() {
+        return targets;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setTargets(List<String> targets) {
+        if (CollectionUtils.isEmpty(targets)) {
+            this.targets = new ArrayList<>();
+        } else {
+            this.targets = targets;
+        }
     }
 
     public List<T> getData() {

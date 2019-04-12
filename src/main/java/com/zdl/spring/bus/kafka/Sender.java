@@ -34,29 +34,29 @@ public class Sender {
         Sender.busProperties = busProperties;
     }
 
-    public static <T> void insertPublish(String endPointId, String target, List<T> data) {
-        busMessagePublish(OPERATION_ADD, endPointId, target, data);
+    public static <T> void insertPublish(String endPointId, List<String> targets, List<T> data) {
+        busMessagePublish(OPERATION_ADD, endPointId, targets, data);
     }
 
-    public static <T> void modifyPublish(String endPointId, String target, List<T> data) {
-        busMessagePublish(OPERATION_MODIFY, endPointId, target, data);
+    public static <T> void modifyPublish(String endPointId, List<String> targets, List<T> data) {
+        busMessagePublish(OPERATION_MODIFY, endPointId, targets, data);
     }
 
-    public static <T> void loadublish(String endPointId, String target, List<T> data) {
-        busMessagePublish(OPERATION_LOAD, endPointId, target, data);
+    public static <T> void loadublish(String endPointId, List<String> targets, List<T> data) {
+        busMessagePublish(OPERATION_LOAD, endPointId, targets, data);
     }
 
-    public static <T> void deletePublish(String endPointId, String target, List<T> data) {
-        busMessagePublish(OPERATION_DELETE, endPointId, target, data);
+    public static <T> void deletePublish(String endPointId, List<String> targets, List<T> data) {
+        busMessagePublish(OPERATION_DELETE, endPointId, targets, data);
     }
 
-    private static <T> void busMessagePublish(int operation, String endPointId, String target, List<T> data) {
+    private static <T> void busMessagePublish(int operation, String endPointId, List<String> targets, List<T> data) {
         BusMessage<T> message = new BusMessage<>();
         message.setData(data);
         message.setEndPointId(endPointId);
         message.setOperation(operation);
         message.setSource(busProperties.getNodeName());
-        message.setTarget(target);
+        message.setTargets(targets);
         publish(busProperties.getTopic(), message);
     }
 

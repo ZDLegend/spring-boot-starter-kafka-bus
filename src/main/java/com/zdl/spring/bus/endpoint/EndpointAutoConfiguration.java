@@ -17,7 +17,7 @@ import java.util.List;
 public class EndpointAutoConfiguration {
     @Bean
     public EndpointManage endpointManage(List<BaseBusEndpoint> endpoints, BusProperties properties) {
-        EndpointManage endpointManage = new EndpointManage(endpoints, properties);
+        var endpointManage = new EndpointManage(endpoints, properties);
         endpointManage.initEndPointMap();
         return endpointManage;
     }

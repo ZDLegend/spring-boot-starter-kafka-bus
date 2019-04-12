@@ -47,11 +47,11 @@ public class BusKafkaAutoConfiguration {
     @Bean
     public ConcurrentMessageListenerContainer<String, String> busListenerContainer(BusKafkaListener listener,
                                                                                    ConsumerFactory<String, String> consumerFactory) {
-        ContainerProperties containerProperties = topicPartitionInitialEndOffset(properties.getTopic());
+        var containerProperties = topicPartitionInitialEndOffset(properties.getTopic());
         containerProperties.setAckMode(ContainerProperties.AckMode.MANUAL);
         ConcurrentMessageListenerContainer<String, String> container
                 = new ConcurrentMessageListenerContainer<>(consumerFactory, containerProperties);
-        String group = "bus_group_" + properties.getNodeName();
+        var group = "bus_group_" + properties.getNodeName();
         container.getContainerProperties().setGroupId(group);
         container.getContainerProperties().setMessageListener(listener);
         return container;

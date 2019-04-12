@@ -51,7 +51,7 @@ public interface BaseBusEndpoint<T> {
     @SuppressWarnings("unchecked")
     default void messageToEndPoint(BusMessage message) {
 
-        int operation = message.getOperation();
+        var operation = message.getOperation();
         Consumer<List<T>> handle;
         switch (operation) {
             case OPERATION_ADD:

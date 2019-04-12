@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.zdl.spring.bus.BusProperties;
 import com.zdl.spring.bus.message.BusMessage;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -13,7 +12,7 @@ import java.util.*;
  * <p>
  * Created by ZDLegend on 2019/4/10 11:43
  */
-public class EndpointManage {
+public final class EndpointManage {
 
     public static final int OPERATION_ADD = 0;
     public static final int OPERATION_MODIFY = 1;
@@ -48,9 +47,10 @@ public class EndpointManage {
     /**
      * 从消息到端点类
      */
+    @SuppressWarnings("unchecked")
     public static void messageToEndPoint(String msg) {
-        BusMessage busMessage = JSON.parseObject(msg, BusMessage.class);
-        if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTarget())) {
+        var busMessage = JSON.parseObject(msg, BusMessage.class);
+        if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTargets())) {
             BaseBusEndpoint endPoint = endpointMap.get(busMessage.getEndPointId());
             if (endPoint != null) {
                 //是否接收指定服务，为空则接收所有服务
@@ -65,8 +65,8 @@ public class EndpointManage {
     /**
      * 是否为bus message的目的Endpoint
      */
-    private static boolean isTargetEndpoint(String nodeName, String targetName) {
-        return StringUtils.isEmpty(targetName) || nodeName.equals(targetName);
+    private static boolean isTargetEndpoint(String nodeName, List<String> targetNames) {
+        return CollectionUtils.isEmpty(targetNames) || targetNames.contains(nodeName);
     }
 
     /**

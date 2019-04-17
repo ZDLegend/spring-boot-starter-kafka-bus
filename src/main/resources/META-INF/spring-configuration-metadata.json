@@ -1,0 +1,9 @@
+{
+  "groups": [
+    {
+      "name": "zld.spring.bus",
+      "type": "com.zdl.spring.bus.BusProperties",
+      "sourceType": "com.zdl.spring.bus.BusProperties"
+    }
+  ]
+}

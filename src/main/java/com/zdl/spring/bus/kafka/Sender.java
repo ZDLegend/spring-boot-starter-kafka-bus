@@ -57,10 +57,10 @@ public class Sender {
         message.setOperation(operation);
         message.setSource(busProperties.getNodeName());
         message.setTargets(targets);
-        publish(busProperties.getTopic(), message);
+        syncPublish(busProperties.getTopic(), message);
     }
 
-    private static <T> ListenableFuture<SendResult<String, String>> publish(String topic, T object) {
+    public static <T> ListenableFuture<SendResult<String, String>> publish(String topic, T object) {
 
         if (object == null) {
             throw new KafkaBusException("kafka sender object is null");

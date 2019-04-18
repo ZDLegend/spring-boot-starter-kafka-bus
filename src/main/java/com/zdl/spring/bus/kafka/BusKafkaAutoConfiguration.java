@@ -1,8 +1,10 @@
 package com.zdl.spring.bus.kafka;
 
 import com.zdl.spring.bus.BusProperties;
+import com.zdl.spring.bus.KafkaBusException;
 import org.apache.kafka.common.PartitionInfo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +28,9 @@ import static org.springframework.kafka.support.TopicPartitionInitialOffset.Seek
 @EnableConfigurationProperties(BusProperties.class)
 public class BusKafkaAutoConfiguration {
 
+    private static final String OFFSET_CONFIG_DEFAULT = "default";
+    private static final String OFFSET_CONFIG_CURRENT = "current";
+
     private final BusProperties properties;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
@@ -35,7 +40,7 @@ public class BusKafkaAutoConfiguration {
     }
 
     @Bean
-    Sender sender() {
+    public Sender sender() {
         return new Sender(kafkaTemplate, properties);
     }
 
@@ -45,9 +50,33 @@ public class BusKafkaAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(KafkaOffsetInit.class)
     public ConcurrentMessageListenerContainer<String, String> busListenerContainer(BusKafkaListener listener,
                                                                                    ConsumerFactory<String, String> consumerFactory) {
-        var containerProperties = topicPartitionInitialEndOffset(properties.getTopic());
+        ContainerProperties containerProperties;
+        if (OFFSET_CONFIG_DEFAULT.equals(properties.getOffsetReset())) {
+            containerProperties = new ContainerProperties(properties.getTopic());
+        } else if (OFFSET_CONFIG_CURRENT.equals(properties.getOffsetReset())) {
+            containerProperties = topicPartitionInitialEndOffset(properties.getTopic());
+        } else {
+            throw new KafkaBusException("zld.spring.bus.offset-reset:" + properties.getOffsetReset() + " need a instance of KafkaOffsetInit.class");
+        }
+
+        return initListenerContainer(listener, containerProperties, consumerFactory);
+    }
+
+    @Bean
+    @ConditionalOnBean(KafkaOffsetInit.class)
+    public ConcurrentMessageListenerContainer<String, String> busListenerContainer(BusKafkaListener listener,
+                                                                                   ConsumerFactory<String, String> consumerFactory,
+                                                                                   KafkaOffsetInit offectInit) {
+        ContainerProperties containerProperties = new ContainerProperties(offectInit.topicPartitionInitialOffset());
+        return initListenerContainer(listener, containerProperties, consumerFactory);
+    }
+
+    public ConcurrentMessageListenerContainer<String, String> initListenerContainer(BusKafkaListener listener,
+                                                                                    ContainerProperties containerProperties,
+                                                                                    ConsumerFactory<String, String> consumerFactory) {
         containerProperties.setAckMode(ContainerProperties.AckMode.MANUAL);
         ConcurrentMessageListenerContainer<String, String> container
                 = new ConcurrentMessageListenerContainer<>(consumerFactory, containerProperties);

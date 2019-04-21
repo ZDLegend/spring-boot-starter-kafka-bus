@@ -13,7 +13,11 @@ import java.util.Objects;
  * @author ZDLegend
  * @create 2019/3/12
  */
-public class ClassUtil {
+public final class ClassUtil {
+
+    private ClassUtil(){
+        //do nothing
+    }
 
     /**
      * 获取一个类的注解,如果未获取到则获取父类

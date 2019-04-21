@@ -74,9 +74,9 @@ public class BusKafkaAutoConfiguration {
         return initListenerContainer(listener, containerProperties, consumerFactory);
     }
 
-    public ConcurrentMessageListenerContainer<String, String> initListenerContainer(BusKafkaListener listener,
-                                                                                    ContainerProperties containerProperties,
-                                                                                    ConsumerFactory<String, String> consumerFactory) {
+    private ConcurrentMessageListenerContainer<String, String> initListenerContainer(BusKafkaListener listener,
+                                                                                     ContainerProperties containerProperties,
+                                                                                     ConsumerFactory<String, String> consumerFactory) {
         containerProperties.setAckMode(ContainerProperties.AckMode.MANUAL);
         ConcurrentMessageListenerContainer<String, String> container
                 = new ConcurrentMessageListenerContainer<>(consumerFactory, containerProperties);

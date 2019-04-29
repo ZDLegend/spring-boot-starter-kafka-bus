@@ -51,13 +51,13 @@ public class Sender {
     }
 
     private static <T> void busMessagePublish(int operation, String endPointId, List<String> targets, List<T> data) {
-        BusMessage<T> message = new BusMessage<>();
-        message.setData(data);
-        message.setEndPointId(endPointId);
-        message.setOperation(operation);
-        message.setSource(busProperties.getNodeName());
-        message.setTargets(targets);
+        BusMessage<T> message = BusMessage.instance(data).operation(operation).endPointId(endPointId)
+                .targets(targets).source(busProperties.getNodeName());
         syncPublish(busProperties.getTopic(), message);
+    }
+
+    public static ListenableFuture<SendResult<String, String>> callbackPublish(BusMessage<String> msg) {
+        return publish(busProperties.getTopic(), msg);
     }
 
     public static <T> ListenableFuture<SendResult<String, String>> publish(String topic, T object) {

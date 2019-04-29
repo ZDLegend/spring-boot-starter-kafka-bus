@@ -50,16 +50,30 @@ public interface BaseBusEndpoint<T> {
      */
     void delete(List<T> list);
 
-    default void callBackSuccess(List<T> list) {
+    default void callBackSuccess(String id) {
     }
 
-    default void callBackFail(List<T> list) {
+    default void callBackFail(String id, Throwable throwable) {
     }
 
     @SuppressWarnings("unchecked")
     default void messageToEndPoint(BusMessage message, String source) {
 
         var operation = message.getOperation();
+
+        if (message.isCallBack()) {
+            switch (operation) {
+                case CALLBACK_SUCCESS:
+                    callBackSuccess(message.getId());
+                    return;
+                case CALLBACK_EXCEPTION:
+                    callBackFail(message.getId(), JSON.parseObject(message.getData().toString(), Throwable.class));
+                    return;
+                default:
+                    return;
+            }
+        }
+
         Consumer<List<T>> handle;
         switch (operation) {
             case OPERATION_ADD:
@@ -74,12 +88,6 @@ public interface BaseBusEndpoint<T> {
             case OPERATION_DELETE:
                 handle = this::delete;
                 break;
-            case CALLBACK_SUCCESS:
-                handle = this::callBackSuccess;
-                break;
-            case CALLBACK_EXCEPTION:
-                handle = this::callBackFail;
-                break;
             default:
                 handle = this::insert;
         }
@@ -92,16 +100,16 @@ public interface BaseBusEndpoint<T> {
             list = message.getData();
         }
 
-        if (CollectionUtils.isEmpty(message.getTargets()) || message.isCallBack()) {
+        if (CollectionUtils.isEmpty(message.getTargets())) {
             handle.accept(list);
         } else {
-            BusMessage<String> msg = BusMessage.callBackInstance(message.getId()).source(source)
+            BusMessage<Throwable> msg = BusMessage.callBackInstance(message.getId()).source(source)
                     .targets(Collections.singletonList(message.getSource()));
             try {
                 handle.accept(list);
-                msg.operation(CALLBACK_SUCCESS);
+                msg.operation(CALLBACK_SUCCESS).setData(Collections.emptyList());
             } catch (Exception e) {
-                msg.operation(CALLBACK_EXCEPTION);
+                msg.operation(CALLBACK_EXCEPTION).setData(Collections.singletonList(e));
             } finally {
                 Sender.callbackPublish(msg);
             }

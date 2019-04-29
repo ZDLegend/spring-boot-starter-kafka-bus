@@ -56,7 +56,7 @@ public class Sender {
         syncPublish(busProperties.getTopic(), message);
     }
 
-    public static ListenableFuture<SendResult<String, String>> callbackPublish(BusMessage<String> msg) {
+    public static ListenableFuture<SendResult<String, String>> callbackPublish(BusMessage<Throwable> msg) {
         return publish(busProperties.getTopic(), msg);
     }
 

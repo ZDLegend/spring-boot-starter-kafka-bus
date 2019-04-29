@@ -62,18 +62,18 @@ public class BusMessage<T> {
         return message;
     }
 
-    public static BusMessage<String> callBackInstance(String id) {
-        BusMessage<String> message = new BusMessage<>();
+    public static BusMessage<Throwable> callBackInstance(String id) {
+        BusMessage<Throwable> message = new BusMessage<>();
         message.id = id;
         message.callBack = true;
         return message;
     }
 
-    public static BusMessage<String> callBackFailInstance(String id) {
+    public static BusMessage<Throwable> callBackFailInstance(String id) {
         return callBackInstance(id).operation(CALLBACK_EXCEPTION);
     }
 
-    public static BusMessage<String> callBackSuccessInstance(String id) {
+    public static BusMessage<Throwable> callBackSuccessInstance(String id) {
         return callBackInstance(id).operation(CALLBACK_SUCCESS);
     }
 

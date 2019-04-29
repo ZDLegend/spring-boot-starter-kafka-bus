@@ -3,10 +3,12 @@ package com.zdl.spring.bus.endpoint;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zdl.spring.bus.kafka.Sender;
 import com.zdl.spring.bus.message.BusMessage;
 import com.zdl.spring.bus.utils.ClassUtil;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -48,8 +50,14 @@ public interface BaseBusEndpoint<T> {
      */
     void delete(List<T> list);
 
+    default void callBackSuccess(List<T> list) {
+    }
+
+    default void callBackFail(List<T> list) {
+    }
+
     @SuppressWarnings("unchecked")
-    default void messageToEndPoint(BusMessage message) {
+    default void messageToEndPoint(BusMessage message, String source) {
 
         var operation = message.getOperation();
         Consumer<List<T>> handle;
@@ -66,6 +74,12 @@ public interface BaseBusEndpoint<T> {
             case OPERATION_DELETE:
                 handle = this::delete;
                 break;
+            case CALLBACK_SUCCESS:
+                handle = this::callBackSuccess;
+                break;
+            case CALLBACK_EXCEPTION:
+                handle = this::callBackFail;
+                break;
             default:
                 handle = this::insert;
         }
@@ -78,6 +92,19 @@ public interface BaseBusEndpoint<T> {
             list = message.getData();
         }
 
-        handle.accept(list);
+        if (CollectionUtils.isEmpty(message.getTargets()) || message.isCallBack()) {
+            handle.accept(list);
+        } else {
+            BusMessage<String> msg = BusMessage.callBackInstance(message.getId()).source(source)
+                    .targets(Collections.singletonList(message.getSource()));
+            try {
+                handle.accept(list);
+                msg.operation(CALLBACK_SUCCESS);
+            } catch (Exception e) {
+                msg.operation(CALLBACK_EXCEPTION);
+            } finally {
+                Sender.callbackPublish(msg);
+            }
+        }
     }
 }

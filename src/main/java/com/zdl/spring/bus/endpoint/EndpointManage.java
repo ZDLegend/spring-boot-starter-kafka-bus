@@ -19,11 +19,15 @@ public final class EndpointManage {
     public static final int OPERATION_LOAD = 2;
     public static final int OPERATION_DELETE = 3;
 
+    public static final int CALLBACK_SUCCESS = 11;
+    public static final int CALLBACK_EXCEPTION = 12;
+
     private static final Map<String, BaseBusEndpoint> endpointMap = new HashMap<>();
 
     private final List<BaseBusEndpoint> endpoints;
 
     private static BusProperties properties;
+
 
     public EndpointManage(List<BaseBusEndpoint> endpoints, BusProperties properties) {
         this.endpoints = endpoints;
@@ -56,7 +60,7 @@ public final class EndpointManage {
                 //是否接收指定服务，为空则接收所有服务
                 List<String> accepts = Arrays.asList(endPoint.getClass().getAnnotation(BusEndpoint.class).accept());
                 if (isAccept(accepts, busMessage.getSource())) {
-                    endPoint.messageToEndPoint(busMessage);
+                    endPoint.messageToEndPoint(busMessage, properties.getNodeName());
                 }
             }
         }

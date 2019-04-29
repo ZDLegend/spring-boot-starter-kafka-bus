@@ -1,0 +1,4 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.zdl.spring.bus.kafka.BusKafkaAutoConfiguration\
+com.zdl.spring.bus.endpoint.EndpointAutoConfiguration

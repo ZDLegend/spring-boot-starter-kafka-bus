@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public final class ClassUtil {
 
-    private ClassUtil(){
+    private ClassUtil() {
         //do nothing
     }
 

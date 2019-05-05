@@ -2,6 +2,7 @@ package com.zdl.spring.bus.endpoint;
 
 import com.alibaba.fastjson.JSON;
 import com.zdl.spring.bus.BusProperties;
+import com.zdl.spring.bus.kafka.Sender;
 import com.zdl.spring.bus.message.BusMessage;
 import org.springframework.util.CollectionUtils;
 
@@ -54,13 +55,26 @@ public final class EndpointManage {
     @SuppressWarnings("unchecked")
     public static void messageToEndPoint(String msg) {
         var busMessage = JSON.parseObject(msg, BusMessage.class);
-        if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTargets())) {
+        if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTargets())
+                && endpointMap.containsKey(busMessage.getEndPointId())) {
             BaseBusEndpoint endPoint = endpointMap.get(busMessage.getEndPointId());
-            if (endPoint != null) {
-                //是否接收指定服务，为空则接收所有服务
-                List<String> accepts = Arrays.asList(endPoint.getClass().getAnnotation(BusEndpoint.class).accept());
-                if (isAccept(accepts, busMessage.getSource())) {
-                    endPoint.messageToEndPoint(busMessage, properties.getNodeName());
+            BusEndpoint ed = endPoint.getClass().getAnnotation(BusEndpoint.class);
+            List<String> accepts = Arrays.asList(ed.accept());
+            if (isAccept(accepts, busMessage.getSource())) {
+                if (!ed.callback()) {
+                    endPoint.messageToEndPoint(busMessage);
+                } else {
+                    BusMessage<Throwable> msgCB = BusMessage.callBackInstance(busMessage.getId())
+                            .source(properties.getNodeName())
+                            .targets(Collections.singletonList(busMessage.getSource()));
+                    try {
+                        endPoint.messageToEndPoint(busMessage);
+                        msgCB.operation(CALLBACK_SUCCESS).setData(Collections.emptyList());
+                    } catch (Exception e) {
+                        msgCB.operation(CALLBACK_EXCEPTION).setData(Collections.singletonList(e));
+                    } finally {
+                        Sender.callbackPublish(msgCB);
+                    }
                 }
             }
         }

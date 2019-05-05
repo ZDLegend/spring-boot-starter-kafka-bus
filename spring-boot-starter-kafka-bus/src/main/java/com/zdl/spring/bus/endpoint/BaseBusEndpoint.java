@@ -3,12 +3,10 @@ package com.zdl.spring.bus.endpoint;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zdl.spring.bus.kafka.Sender;
 import com.zdl.spring.bus.message.BusMessage;
 import com.zdl.spring.bus.utils.ClassUtil;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -50,24 +48,27 @@ public interface BaseBusEndpoint<T> {
      */
     void delete(List<T> list);
 
-    default void callBackSuccess(String id) {
-    }
-
-    default void callBackFail(String id, Throwable throwable) {
+    /**
+     * 消息回调
+     *
+     * @param id        消息id
+     * @param throwable 消息错误异常
+     */
+    default void callBack(String id, String source, Throwable throwable) {
     }
 
     @SuppressWarnings("unchecked")
-    default void messageToEndPoint(BusMessage message, String source) {
+    default void messageToEndPoint(BusMessage message) {
 
         var operation = message.getOperation();
 
         if (message.isCallBack()) {
             switch (operation) {
                 case CALLBACK_SUCCESS:
-                    callBackSuccess(message.getId());
+                    callBack(message.getId(), message.getSource(), null);
                     return;
                 case CALLBACK_EXCEPTION:
-                    callBackFail(message.getId(), JSON.parseObject(message.getData().toString(), Throwable.class));
+                    callBack(message.getId(), message.getSource(), JSON.parseObject(message.getData().toString(), Throwable.class));
                     return;
                 default:
                     return;
@@ -100,19 +101,6 @@ public interface BaseBusEndpoint<T> {
             list = message.getData();
         }
 
-        if (CollectionUtils.isEmpty(message.getTargets())) {
-            handle.accept(list);
-        } else {
-            BusMessage<Throwable> msg = BusMessage.callBackInstance(message.getId()).source(source)
-                    .targets(Collections.singletonList(message.getSource()));
-            try {
-                handle.accept(list);
-                msg.operation(CALLBACK_SUCCESS).setData(Collections.emptyList());
-            } catch (Exception e) {
-                msg.operation(CALLBACK_EXCEPTION).setData(Collections.singletonList(e));
-            } finally {
-                Sender.callbackPublish(msg);
-            }
-        }
+        handle.accept(list);
     }
 }

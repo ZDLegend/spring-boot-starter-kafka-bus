@@ -34,26 +34,27 @@ public class Sender {
         Sender.busProperties = busProperties;
     }
 
-    public static <T> void insertPublish(String endPointId, List<String> targets, List<T> data) {
-        busMessagePublish(OPERATION_ADD, endPointId, targets, data);
+    public static <T> String insertPublish(String endPointId, List<String> targets, List<T> data) {
+        return busMessagePublish(OPERATION_ADD, endPointId, targets, data);
     }
 
-    public static <T> void modifyPublish(String endPointId, List<String> targets, List<T> data) {
-        busMessagePublish(OPERATION_MODIFY, endPointId, targets, data);
+    public static <T> String modifyPublish(String endPointId, List<String> targets, List<T> data) {
+        return busMessagePublish(OPERATION_MODIFY, endPointId, targets, data);
     }
 
-    public static <T> void loadublish(String endPointId, List<String> targets, List<T> data) {
-        busMessagePublish(OPERATION_LOAD, endPointId, targets, data);
+    public static <T> String loadublish(String endPointId, List<String> targets, List<T> data) {
+        return busMessagePublish(OPERATION_LOAD, endPointId, targets, data);
     }
 
-    public static <T> void deletePublish(String endPointId, List<String> targets, List<T> data) {
-        busMessagePublish(OPERATION_DELETE, endPointId, targets, data);
+    public static <T> String deletePublish(String endPointId, List<String> targets, List<T> data) {
+        return busMessagePublish(OPERATION_DELETE, endPointId, targets, data);
     }
 
-    private static <T> void busMessagePublish(int operation, String endPointId, List<String> targets, List<T> data) {
+    private static <T> String busMessagePublish(int operation, String endPointId, List<String> targets, List<T> data) {
         BusMessage<T> message = BusMessage.instance(data).operation(operation).endPointId(endPointId)
                 .targets(targets).source(busProperties.getNodeName());
         syncPublish(busProperties.getTopic(), message);
+        return message.getId();
     }
 
     public static ListenableFuture<SendResult<String, String>> callbackPublish(BusMessage<Throwable> msg) {

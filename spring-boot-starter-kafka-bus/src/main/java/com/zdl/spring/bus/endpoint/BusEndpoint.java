@@ -29,4 +29,9 @@ public @interface BusEndpoint {
      * 指定接收来源（为空则接受所有）
      */
     String[] accept() default {};
+
+    /**
+     * 是否支持回调
+     */
+    boolean callback() default false;
 }

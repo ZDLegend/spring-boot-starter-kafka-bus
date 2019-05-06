@@ -65,7 +65,6 @@ public final class EndpointManage {
                     endPoint.messageToEndPoint(busMessage);
                 } else {
                     BusMessage<Throwable> msgCB = BusMessage.callBackInstance(busMessage.getId())
-                            .source(properties.getNodeName())
                             .targets(Collections.singletonList(busMessage.getSource()));
                     try {
                         endPoint.messageToEndPoint(busMessage);

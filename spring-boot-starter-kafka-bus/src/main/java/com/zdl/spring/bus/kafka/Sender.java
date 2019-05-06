@@ -27,7 +27,7 @@ public class Sender {
     private static KafkaTemplate<String, String> kafkaTemplate;
 
 
-    private static BusProperties busProperties;
+    public static BusProperties busProperties;
 
     public Sender(KafkaTemplate<String, String> kafkaTemplate, BusProperties busProperties) {
         Sender.kafkaTemplate = kafkaTemplate;
@@ -52,7 +52,7 @@ public class Sender {
 
     private static <T> String busMessagePublish(int operation, String endPointId, List<String> targets, List<T> data) {
         BusMessage<T> message = BusMessage.instance(data).operation(operation).endPointId(endPointId)
-                .targets(targets).source(busProperties.getNodeName());
+                .targets(targets);
         syncPublish(busProperties.getTopic(), message);
         return message.getId();
     }

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import static com.zdl.spring.bus.endpoint.EndpointManage.CALLBACK_EXCEPTION;
 import static com.zdl.spring.bus.endpoint.EndpointManage.CALLBACK_SUCCESS;
+import static com.zdl.spring.bus.kafka.Sender.busProperties;
 
 /**
  * 消息总线中的消息数据结构
@@ -58,6 +59,7 @@ public class BusMessage<T> {
         BusMessage<T> message = new BusMessage<>();
         message.id = UUID.randomUUID().toString();
         message.data = data;
+        message.source = busProperties.getNodeName();
         message.callBack = false;
         return message;
     }
@@ -65,6 +67,7 @@ public class BusMessage<T> {
     public static BusMessage<Throwable> callBackInstance(String id) {
         BusMessage<Throwable> message = new BusMessage<>();
         message.id = id;
+        message.source = busProperties.getNodeName();
         message.callBack = true;
         return message;
     }

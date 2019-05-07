@@ -7,6 +7,11 @@ import java.lang.annotation.*;
 /**
  * 消息总线端点
  * <p>
+ * Such classes are considered as candidates for auto-detection
+ * when using annotation-based configuration and classpath scanning.
+ * <p>被该注解注解的类会交给spring context管理
+ * <p>该注解需要和{@link BaseBusEndpoint}interface搭配使用
+ * <p>
  * Created by ZDLegend on 2019/4/10 11:11
  */
 @Target({ElementType.TYPE})

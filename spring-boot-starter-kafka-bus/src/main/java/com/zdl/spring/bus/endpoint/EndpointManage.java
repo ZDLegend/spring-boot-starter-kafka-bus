@@ -29,7 +29,6 @@ public final class EndpointManage {
 
     private static BusProperties properties;
 
-
     public EndpointManage(List<BaseBusEndpoint> endpoints, BusProperties properties) {
         this.endpoints = endpoints;
         EndpointManage.properties = properties;

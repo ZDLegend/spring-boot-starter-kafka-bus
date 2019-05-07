@@ -14,7 +14,7 @@ import static com.zdl.spring.bus.endpoint.EndpointManage.*;
 
 /**
  * 消息总线端点基类
- * <p>
+ * <p>该注解需要和{@link BusEndpoint @BusEndpoint}搭配使用
  * Created by ZDLegend on 2019/4/10 11:11
  */
 public interface BaseBusEndpoint<T> {

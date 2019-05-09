@@ -11,11 +11,16 @@
 * 一个服务的endpoint可以感知其他服务相同标识的endpoint对该服务发送的消息消费情况
 
 ### endpoint
-消息总线的endpoint，用来处理特定消息的相关操作。需要注解@BaseBusEndpoint和接口BaseBusEndpoint<T>搭配使用。
-同一个服务只能设置一个endpoint.
+* 消息总线的endpoint，用来处理特定消息的相关操作。
+* 需要注解@BusEndpoint和接口BaseBusEndpoint<T>搭配使用。
+* 注解@BusEndpoint中定义endpoint自身的属性
+  * value() endpoint标识，用来区分同一个服务中的不同endpoint.
+  * order() endpoint加载顺序设置，帮助有关联的两个endpoint加载
+  * accept() endpoint指定接收其它服务消息
+  * callback() 感知其他服务相同标识的endpoint对该服务发送的消息消费情况
+* 接口BaseBusEndpoint<T>定义endpoint的行为
+* 同一个服务只能设置一个endpoint.
 
-### endpoint标识
-用来区分同一个服务中的不同endpoint.
-
-
-
+### 消息
+* 用来消息总线间传固定递消息体
+* 消息数据结构为com.zdl.spring.bus.message.BusMessage

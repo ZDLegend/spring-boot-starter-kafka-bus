@@ -5,10 +5,10 @@ import com.zdl.spring.bus.KafkaBusException;
 import org.apache.kafka.common.PartitionInfo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
@@ -24,8 +24,8 @@ import static org.springframework.kafka.support.TopicPartitionInitialOffset.Seek
  * Created by ZDLegend on 2019/4/10 16:44
  */
 @Configuration
-@ConditionalOnBean(KafkaAutoConfiguration.class)
 @EnableConfigurationProperties(BusProperties.class)
+@EnableKafka
 public class BusKafkaAutoConfiguration {
 
     private static final String OFFSET_CONFIG_DEFAULT = "default";
@@ -40,7 +40,7 @@ public class BusKafkaAutoConfiguration {
     }
 
     @Bean
-    public Sender sender() {
+    public Sender sender(BusProperties properties, KafkaTemplate<String, String> kafkaTemplate) {
         return new Sender(kafkaTemplate, properties);
     }
 

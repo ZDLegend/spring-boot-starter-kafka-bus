@@ -12,10 +12,10 @@ import java.util.List;
  * Created by ZDLegend on 2019/4/10 17:34
  */
 @Configuration
-@ConditionalOnBean(BaseBusEndpoint.class)
 @EnableConfigurationProperties(BusProperties.class)
 public class EndpointAutoConfiguration {
     @Bean
+    @ConditionalOnBean(BaseBusEndpoint.class)
     public EndpointManage endpointManage(List<BaseBusEndpoint> endpoints, BusProperties properties) {
         var endpointManage = new EndpointManage(endpoints, properties);
         endpointManage.initEndPointMap();

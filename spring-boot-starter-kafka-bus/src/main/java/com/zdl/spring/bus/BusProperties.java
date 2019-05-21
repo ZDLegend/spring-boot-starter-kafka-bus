@@ -2,7 +2,6 @@ package com.zdl.spring.bus;
 
 import com.zdl.spring.bus.kafka.KafkaOffsetInit;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.StringUtils;
 
 /**
  * Created by ZDLegend on 2019/4/10 16:54
@@ -28,9 +27,9 @@ public class BusProperties {
     private String offsetReset = "default";
 
     public String getNodeName() {
-        if (StringUtils.isEmpty(nodeName)) {
-            throw new KafkaBusException("The node name is empty, please check if the configuration item 'zdl.spring.bus.nodeName' is configured.");
-        }
+//        if (StringUtils.isEmpty(nodeName)) {
+//            throw new KafkaBusException("The node name is empty, please check if the configuration item 'zdl.spring.bus.nodeName' is configured.");
+//        }
         return nodeName;
     }
 
@@ -39,9 +38,9 @@ public class BusProperties {
     }
 
     public String getTopic() {
-        if (StringUtils.isEmpty(topic)) {
-            throw new KafkaBusException("The topic is empty, please check if the configuration item 'zdl.spring.bus.topic' is configured.");
-        }
+//        if (StringUtils.isEmpty(topic)) {
+//            throw new KafkaBusException("The topic is empty, please check if the configuration item 'zdl.spring.bus.topic' is configured.");
+//        }
         return topic;
     }
 

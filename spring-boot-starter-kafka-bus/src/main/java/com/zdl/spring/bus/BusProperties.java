@@ -1,12 +1,13 @@
 package com.zdl.spring.bus;
 
 import com.zdl.spring.bus.kafka.KafkaOffsetInit;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Created by ZDLegend on 2019/4/10 16:54
  */
-@ConfigurationProperties(prefix = "zld.spring.bus")
+@ConfigurationProperties(prefix = "zdl.spring.bus")
 public class BusProperties {
 
     /**
@@ -26,10 +27,15 @@ public class BusProperties {
      */
     private String offsetReset = "default";
 
+    /**
+     * 是否启动消费者
+     */
+    private boolean enableConsumer = true;
+
     public String getNodeName() {
-//        if (StringUtils.isEmpty(nodeName)) {
-//            throw new KafkaBusException("The node name is empty, please check if the configuration item 'zdl.spring.bus.nodeName' is configured.");
-//        }
+        if (StringUtils.isBlank(nodeName)) {
+            throw new KafkaBusException("The node name is empty, please check if the configuration item 'zdl.spring.bus.nodeName' is configured.");
+        }
         return nodeName;
     }
 
@@ -38,9 +44,9 @@ public class BusProperties {
     }
 
     public String getTopic() {
-//        if (StringUtils.isEmpty(topic)) {
-//            throw new KafkaBusException("The topic is empty, please check if the configuration item 'zdl.spring.bus.topic' is configured.");
-//        }
+        if (StringUtils.isBlank(topic)) {
+            throw new KafkaBusException("The topic is empty, please check if the configuration item 'zdl.spring.bus.topic' is configured.");
+        }
         return topic;
     }
 
@@ -54,5 +60,13 @@ public class BusProperties {
 
     public void setOffsetReset(String offsetReset) {
         this.offsetReset = offsetReset;
+    }
+
+    public boolean isEnableConsumer() {
+        return enableConsumer;
+    }
+
+    public void setEnableConsumer(boolean enableConsumer) {
+        this.enableConsumer = enableConsumer;
     }
 }

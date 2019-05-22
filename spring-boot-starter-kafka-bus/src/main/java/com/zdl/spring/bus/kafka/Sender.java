@@ -26,8 +26,7 @@ public class Sender {
 
     private static KafkaTemplate<String, String> kafkaTemplate;
 
-
-    public static BusProperties busProperties;
+    private static BusProperties busProperties;
 
     public Sender(KafkaTemplate<String, String> kafkaTemplate, BusProperties busProperties) {
         Sender.kafkaTemplate = kafkaTemplate;
@@ -96,5 +95,9 @@ public class Sender {
         } catch (ExecutionException e) {
             throw new KafkaBusException("kafka sender data ExecutionException, topic:" + topic, e);
         }
+    }
+
+    public static BusProperties getBusProperties() {
+        return busProperties;
     }
 }

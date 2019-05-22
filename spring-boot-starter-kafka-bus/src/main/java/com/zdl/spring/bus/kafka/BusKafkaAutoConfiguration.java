@@ -5,6 +5,7 @@ import com.zdl.spring.bus.KafkaBusException;
 import org.apache.kafka.common.PartitionInfo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,7 @@ public class BusKafkaAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(KafkaOffsetInit.class)
+    @ConditionalOnProperty(name = "zdl.spring.bus.enable-consumer", havingValue = "true", matchIfMissing = true)
     public ConcurrentMessageListenerContainer<String, String> busListenerContainer(BusKafkaListener listener,
                                                                                    ConsumerFactory<String, String> consumerFactory) {
         ContainerProperties containerProperties;
@@ -67,6 +69,7 @@ public class BusKafkaAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(KafkaOffsetInit.class)
+    @ConditionalOnProperty(name = "zdl.spring.bus.enable-consumer", havingValue = "true", matchIfMissing = true)
     public ConcurrentMessageListenerContainer<String, String> busListenerContainer(BusKafkaListener listener,
                                                                                    ConsumerFactory<String, String> consumerFactory,
                                                                                    KafkaOffsetInit offectInit) {

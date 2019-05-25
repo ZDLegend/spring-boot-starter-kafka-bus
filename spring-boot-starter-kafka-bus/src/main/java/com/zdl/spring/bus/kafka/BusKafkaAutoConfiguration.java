@@ -1,7 +1,7 @@
 package com.zdl.spring.bus.kafka;
 
-import com.zdl.spring.bus.BusProperties;
 import com.zdl.spring.bus.KafkaBusException;
+import com.zdl.spring.bus.properties.BusProperties;
 import org.apache.kafka.common.PartitionInfo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

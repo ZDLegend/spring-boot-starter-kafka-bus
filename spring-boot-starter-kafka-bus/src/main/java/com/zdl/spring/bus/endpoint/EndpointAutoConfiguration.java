@@ -1,6 +1,6 @@
 package com.zdl.spring.bus.endpoint;
 
-import com.zdl.spring.bus.BusProperties;
+import com.zdl.spring.bus.properties.BusProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

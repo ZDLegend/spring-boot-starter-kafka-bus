@@ -1,9 +1,9 @@
 package com.zdl.spring.bus.endpoint;
 
 import com.alibaba.fastjson.JSON;
-import com.zdl.spring.bus.BusProperties;
 import com.zdl.spring.bus.kafka.Sender;
 import com.zdl.spring.bus.message.BusMessage;
+import com.zdl.spring.bus.properties.BusProperties;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;

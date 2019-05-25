@@ -1,7 +1,6 @@
-package com.zdl.spring.bus;
+package com.zdl.spring.bus.properties;
 
 import com.zdl.spring.bus.kafka.KafkaOffsetInit;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -33,9 +32,6 @@ public class BusProperties {
     private boolean enableConsumer = true;
 
     public String getNodeName() {
-        if (StringUtils.isBlank(nodeName)) {
-            throw new KafkaBusException("The node name is empty, please check if the configuration item 'zdl.spring.bus.nodeName' is configured.");
-        }
         return nodeName;
     }
 
@@ -44,9 +40,6 @@ public class BusProperties {
     }
 
     public String getTopic() {
-        if (StringUtils.isBlank(topic)) {
-            throw new KafkaBusException("The topic is empty, please check if the configuration item 'zdl.spring.bus.topic' is configured.");
-        }
         return topic;
     }
 

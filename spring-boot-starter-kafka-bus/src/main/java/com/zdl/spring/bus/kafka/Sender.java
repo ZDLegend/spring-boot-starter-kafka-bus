@@ -1,9 +1,9 @@
 package com.zdl.spring.bus.kafka;
 
 import com.alibaba.fastjson.JSON;
-import com.zdl.spring.bus.BusProperties;
 import com.zdl.spring.bus.KafkaBusException;
 import com.zdl.spring.bus.message.BusMessage;
+import com.zdl.spring.bus.properties.BusProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;

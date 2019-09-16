@@ -9,6 +9,7 @@
 * 支持指定发送消息给某个或多个服务的endpoint
 * endpoint支持指定接收来自某个或多个服务的消息
 * 一个服务的endpoint可以感知其他服务相同标识的endpoint对该服务发送的消息消费情况
+* 支持指定offset消费
 
 ### endpoint
 * 消息总线的endpoint，用来处理特定消息的相关操作。
@@ -19,7 +20,7 @@
   * accept() endpoint指定接收其它服务消息
   * callback() 感知其他服务相同标识的endpoint对该服务发送的消息消费情况
 * 接口BaseBusEndpoint<T>定义endpoint的行为
-* 同一个服务只能设置一个endpoint.
+* 同一个服务支持多个不同名或同名endpoint.
 
 ### 消息
 * 用来消息总线间传固定递消息体

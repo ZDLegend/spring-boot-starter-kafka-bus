@@ -23,7 +23,7 @@ public final class EndpointManage {
     public static final int CALLBACK_SUCCESS = 11;
     public static final int CALLBACK_EXCEPTION = 12;
 
-    private static final Map<String, BaseBusEndpoint> endpointMap = new HashMap<>();
+    private static final Map<String, List<BaseBusEndpoint>> endpointMap = new HashMap<>();
 
     private final List<BaseBusEndpoint> endpoints;
 
@@ -43,7 +43,9 @@ public final class EndpointManage {
                 .sorted(Comparator.comparingInt(endPoint -> endPoint.getClass().getAnnotation(BusEndpoint.class).order()))
                 .forEach(endPoint -> {
                     BusEndpoint busEndPoint = endPoint.getClass().getAnnotation(BusEndpoint.class);
-                    endpointMap.put(busEndPoint.value(), endPoint);
+                    List<BaseBusEndpoint> endpointList = endpointMap.getOrDefault(busEndPoint.value(), new ArrayList<>());
+                    endpointList.add(endPoint);
+                    endpointMap.put(busEndPoint.value(), endpointList);
                     endPoint.init();
                 });
     }
@@ -56,25 +58,27 @@ public final class EndpointManage {
         var busMessage = JSON.parseObject(msg, BusMessage.class);
         if (msg != null && isTargetEndpoint(properties.getNodeName(), busMessage.getTargets())
                 && endpointMap.containsKey(busMessage.getEndPointId())) {
-            BaseBusEndpoint endPoint = endpointMap.get(busMessage.getEndPointId());
-            BusEndpoint ed = endPoint.getClass().getAnnotation(BusEndpoint.class);
-            List<String> accepts = Arrays.asList(ed.accept());
-            if (isAccept(accepts, busMessage.getSource())) {
-                if (!ed.callback()) {
-                    endPoint.messageToEndPoint(busMessage);
-                } else {
-                    BusMessage<Throwable> msgCB = BusMessage.callBackInstance(busMessage.getId())
-                            .targets(Collections.singletonList(busMessage.getSource()));
-                    try {
+            List<BaseBusEndpoint> endpointList = endpointMap.get(busMessage.getEndPointId());
+            endpointList.forEach(endPoint -> {
+                BusEndpoint ed = endPoint.getClass().getAnnotation(BusEndpoint.class);
+                List<String> accepts = Arrays.asList(ed.accept());
+                if (isAccept(accepts, busMessage.getSource())) {
+                    if (!ed.callback()) {
                         endPoint.messageToEndPoint(busMessage);
-                        msgCB.operation(CALLBACK_SUCCESS).setData(Collections.emptyList());
-                    } catch (Exception e) {
-                        msgCB.operation(CALLBACK_EXCEPTION).setData(Collections.singletonList(e));
-                    } finally {
-                        Sender.callbackPublish(msgCB);
+                    } else {
+                        BusMessage<Throwable> msgCB = BusMessage.callBackInstance(busMessage.getId())
+                                .targets(Collections.singletonList(busMessage.getSource()));
+                        try {
+                            endPoint.messageToEndPoint(busMessage);
+                            msgCB.operation(CALLBACK_SUCCESS).setData(Collections.emptyList());
+                        } catch (Exception e) {
+                            msgCB.operation(CALLBACK_EXCEPTION).setData(Collections.singletonList(e));
+                        } finally {
+                            Sender.callbackPublish(msgCB);
+                        }
                     }
                 }
-            }
+            });
         }
     }
 

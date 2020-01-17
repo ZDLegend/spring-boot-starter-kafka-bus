@@ -1,4 +1,4 @@
-package com.zdl.lafla.sender.controller;
+package com.zdl.kafka.sender.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zdl.spring.bus.kafka.Sender;

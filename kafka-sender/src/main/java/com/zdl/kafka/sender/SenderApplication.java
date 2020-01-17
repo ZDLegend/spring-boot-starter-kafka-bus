@@ -1,4 +1,4 @@
-package com.zdl.lafla.sender;
+package com.zdl.kafka.sender;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

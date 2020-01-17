@@ -12,6 +12,7 @@
     </parent>
 
     <modules>
+        <module>kafka-sender</module>
         <module>spring-boot-kafka-bus-demo</module>
         <module>spring-boot-starter-kafka-bus</module>
     </modules>

@@ -7,7 +7,7 @@
         <module>demo-simple</module>
         <module>demo-jpa</module>
         <module>demo-callback</module>
-        <module>sender</module>
+        <module>demo-sender</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

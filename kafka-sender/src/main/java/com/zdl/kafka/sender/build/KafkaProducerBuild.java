@@ -1,4 +1,4 @@
-package com.zdl.kafka.sender;
+package com.zdl.kafka.sender.build;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

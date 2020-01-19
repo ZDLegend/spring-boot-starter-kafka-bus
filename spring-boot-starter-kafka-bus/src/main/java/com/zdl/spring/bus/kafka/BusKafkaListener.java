@@ -21,6 +21,8 @@ public class BusKafkaListener implements BatchAcknowledgingMessageListener<Strin
     @Override
     public void onMessage(List<ConsumerRecord<String, String>> list, Acknowledgment acknowledgment) {
         logger.debug("received message {}", list.size());
-        list.stream().map(ConsumerRecord::value).forEach(EndpointManage::messageToEndPoint);
+        list.stream()
+                .map(ConsumerRecord::value)
+                .forEach(EndpointManage::messageToEndPoint);
     }
 }

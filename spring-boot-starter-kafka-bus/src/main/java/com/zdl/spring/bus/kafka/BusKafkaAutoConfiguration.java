@@ -89,6 +89,7 @@ public class BusKafkaAutoConfiguration {
         return container;
     }
 
+    //系统每次启动，从最新的offset开始消费
     private ContainerProperties topicPartitionInitialEndOffset(String topic) {
         List<PartitionInfo> partitionInfos = kafkaTemplate.partitionsFor(topic);
         if (!CollectionUtils.isEmpty(partitionInfos)) {

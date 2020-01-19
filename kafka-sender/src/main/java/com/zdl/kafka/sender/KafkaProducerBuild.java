@@ -56,7 +56,6 @@ public class KafkaProducerBuild {
     }
 
     private CompletableFuture<RecordMetadata> send(ProducerRecord<String, String> message) {
-        producer.send(message);
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return producer.send(message).get();

@@ -1,7 +1,7 @@
 ## 命令说明
 
 ### 创建topic
-* kafka-topics.sh --zookeeper {zookeeper-ip:port} --replication-factor 1 --partitions {partition-num} --topic {topic}
+* kafka-topics.sh --zookeeper {zookeeper-ip:port} --create --replication-factor 1 --partitions {partition-num} --topic {topic}
 
 ### 为topic增加partition
 * kafka-topics.sh --zookeeper {zookeeper-ip:port} -alter -partitions {partition-num} -topic {topic}

@@ -3,6 +3,7 @@ package com.zdl.spring.bus.endpoint;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zdl.spring.bus.KafkaBusException;
 import com.zdl.spring.bus.message.BusMessage;
 import com.zdl.spring.bus.utils.ClassUtil;
 import org.springframework.util.CollectionUtils;
@@ -57,6 +58,10 @@ public interface BaseBusEndpoint<T> {
     default void callBack(String id, String source, Throwable throwable) {
     }
 
+    default void callBack(String id, String source) {
+        callBack(id, source, null);
+    }
+
     @SuppressWarnings("unchecked")
     default void messageToEndPoint(BusMessage message) {
 
@@ -64,34 +69,25 @@ public interface BaseBusEndpoint<T> {
 
         if (message.isCallBack()) {
             switch (operation) {
-                case CALLBACK_SUCCESS:
-                    callBack(message.getId(), message.getSource(), null);
-                    return;
-                case CALLBACK_EXCEPTION:
-                    callBack(message.getId(), message.getSource(), JSON.parseObject(message.getData().toString(), Throwable.class));
-                    return;
-                default:
-                    return;
+                case CALLBACK_SUCCESS
+                        -> callBack(message.getId(), message.getSource(), null);
+                case CALLBACK_EXCEPTION
+                        -> callBack(message.getId(), message.getSource(),
+                        JSON.parseObject(message.getData().toString(), Throwable.class));
+                default
+                        -> throw new KafkaBusException("error callback operation: " + operation);
             }
+            return;
         }
 
         Consumer<List<T>> handle;
-        switch (operation) {
-            case OPERATION_ADD:
-                handle = this::insert;
-                break;
-            case OPERATION_MODIFY:
-                handle = this::modify;
-                break;
-            case OPERATION_LOAD:
-                handle = this::load;
-                break;
-            case OPERATION_DELETE:
-                handle = this::delete;
-                break;
-            default:
-                handle = this::insert;
-        }
+        handle = switch (operation) {
+            case OPERATION_ADD -> this::insert;
+            case OPERATION_MODIFY -> this::modify;
+            case OPERATION_LOAD -> this::load;
+            case OPERATION_DELETE -> this::delete;
+            default -> throw new KafkaBusException("error operation: " + operation);
+        };
 
         List<T> list;
         if (!CollectionUtils.isEmpty(message.getData()) && message.getData().get(0) instanceof JSONObject) {

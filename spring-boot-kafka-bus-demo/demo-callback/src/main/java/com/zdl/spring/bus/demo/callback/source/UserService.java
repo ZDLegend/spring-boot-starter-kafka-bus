@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.zdl.spring.bus.endpoint.EndpointManage.OPERATION_ADD;
-import static com.zdl.spring.bus.kafka.Sender.busProperties;
-import static com.zdl.spring.bus.kafka.Sender.syncPublish;
+import static com.zdl.spring.bus.kafka.Sender.*;
 
 /**
  * Created by ZDLegend on 2019/4/11 13:37
@@ -21,7 +20,7 @@ public class UserService {
                 .operation(OPERATION_ADD)
                 .endPointId("callback-user");
         CallBackUserEndpoint.register(message.getId(), "");
-        syncPublish(busProperties.getTopic(), message);
+        syncPublish(getBusProperties().getTopic(), message);
         return users;
     }
 }
